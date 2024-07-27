@@ -35,13 +35,18 @@ const addName = async () => {
     value: name.value,
     createdAt: new Date().getTime()
   }
+
+  if (nameList.value.find(n => n.value === name.value)) {
+    return 
+  }
+  else {
   try {
     const responseAddName = await axios.post(`${apiUrl}/name`, newNameObj)
     nameList.value.push(responseAddName.data)
   } catch (error) {
     console.error('Error adding name:', error)
   }
-}
+}}
 
 const addTodo = async () => {
   if (inputContent.value.trim() === '') {
@@ -74,28 +79,12 @@ const removeTodo = async (todo) => {
   }
 }
 
-const removeName = async () => {
-  try {
-    await axios.delete(`${apiUrl}/name/${createdAt}`)
-
-  } catch (error) {
-    console.error('Error removing todo:', error)
-  }
-}
-
 const updateTodo = async (todo) => {
   try {
     await axios.put(`${apiUrl}/todos/${todo.id}`, todo)
-  } catch (error) {
-    console.error('Error updating todo:', error)
-  }
-}
-
-const updateName = async (todo) => {
-  try {
     await axios.put(`${apiUrl}/name/${todo.id}`, todo)
   } catch (error) {
-    console.error('Error updating name:', error)
+    console.error('Error updating todo:', error)
   }
 }
 
@@ -103,9 +92,7 @@ watch(todoList, (newVal) => {
   newVal.forEach(todo => updateTodo(todo))
 }, { deep: true })
 
-watch(nameList, (newVal) => {
-updateName(newVal)
-})
+
 onMounted(() => {
   fetchName()
   fetchTodos()
